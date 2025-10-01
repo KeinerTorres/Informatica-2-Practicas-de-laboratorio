@@ -23,6 +23,8 @@ public:
 
     bool iniciarSesion(const string& cedula, const string& contrasena);
 
+    bool validarAdmin(const string& contrasena);
+
 };
 
 #endif // SISTEMACAJERO_H

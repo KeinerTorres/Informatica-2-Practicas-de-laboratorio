@@ -78,3 +78,64 @@ bool SistemaCajero::iniciarSesion(const string& cedula,
     return true;
 }
 
+bool SistemaCajero::validarAdmin(const string& contrasena) {
+    ifstream f("sudo.txt", ios::binary);
+    if (!f.is_open()) {
+        cerr << "Error al abrir sudo.txt" << endl;
+        return false;
+    }
+
+
+    string contenidoCod((istreambuf_iterator<char>(f)), istreambuf_iterator<char>());
+    f.close();
+
+    string textoClaro;
+    try {
+        textoClaro = Codificador::decodificar(contenidoCod, SEMILLA_N);
+    } catch (...) {
+        cerr << "No se pudo decodificar sudo.txt (verifique la semilla n)." << endl;
+        return false;
+    }
+
+
+    istringstream lines(textoClaro);
+    string linea;
+
+    while (true) {
+        string ced, usu, cla, sal;
+
+        // Para cédula
+        if (!getline(lines, linea)) break;
+        if (linea.rfind("cedula:", 0) != 0) continue;
+        ced = linea.substr(7);
+        if (!ced.empty() && ced[0] == ' ') ced.erase(0, 1);
+
+        // Para usuario
+        if (!getline(lines, linea)) break;
+        if (linea.rfind("usuario:", 0) != 0) continue;
+        usu = linea.substr(8);
+        if (!usu.empty() && usu[0] == ' ') usu.erase(0, 1);
+
+        // Para clave
+        if (!getline(lines, linea)) break;
+        if (linea.rfind("clave:", 0) != 0) continue;
+        cla = linea.substr(6);
+        if (!cla.empty() && cla[0] == ' ') cla.erase(0, 1);
+
+        // Para saldo
+        if (!getline(lines, linea)) break;
+        if (linea.rfind("saldo:", 0) != 0) continue;
+        sal = linea.substr(6);
+        if (!sal.empty() && sal[0] == ' ') sal.erase(0, 1);
+
+
+        getline(lines, linea);
+
+
+        if (cla == contrasena) {
+            return true;
+        }
+    }
+
+    return false;
+}
