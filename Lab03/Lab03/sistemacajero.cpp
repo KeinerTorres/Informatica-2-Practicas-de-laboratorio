@@ -48,3 +48,33 @@ void SistemaCajero::guardarUsuarios() {
                 << u.second.second << "\n";  // Para saldo
     }
 }
+
+void SistemaCajero::registrarUsuario(const string& cedula,
+                                     const string& contrasena,
+                                     double saldo) {
+
+    string bits = Codificador::textoA_bits(contrasena);
+
+    string bitsCod = Codificador::codificarBits_M1(bits, SEMILLA_N);
+
+    usuarios[cedula] = {bitsCod, saldo};
+    guardarUsuarios();
+}
+
+
+bool SistemaCajero::iniciarSesion(const string& cedula,
+                                  const string& contrasena) {
+    auto it = usuarios.find(cedula);
+    if (it == usuarios.end()) return false;
+
+    string bitsEntrada = Codificador::textoA_bits(contrasena);
+    string bitsEntradaCod = Codificador::codificarBits_M1(bitsEntrada, SEMILLA_N);
+
+    if (it->second.first != bitsEntradaCod) return false;
+
+    if (it->second.second < 1000.0) return false;
+    it->second.second -= 1000.0;
+    guardarUsuarios();
+    return true;
+}
+

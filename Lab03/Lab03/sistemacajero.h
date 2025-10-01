@@ -18,6 +18,11 @@ private:
 public:
     SistemaCajero();
     ~SistemaCajero();
+
+    void registrarUsuario(const string& cedula, const string& contrasena, double saldo);
+
+    bool iniciarSesion(const string& cedula, const string& contrasena);
+
 };
 
 #endif // SISTEMACAJERO_H
