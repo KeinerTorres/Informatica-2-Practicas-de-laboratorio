@@ -1,0 +1,15 @@
+cedula: 1027964067
+usuario: Keiner
+clave: admin1
+saldo: 2500000
+---
+cedula: 1254975632
+usuario: Lindsay
+clave: admin2
+saldo: 1525000
+---
+cedula: 1000041535
+usuario: Pepito
+clave: Admin3
+saldo: 2000000
+---
