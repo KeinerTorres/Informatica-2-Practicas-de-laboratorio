@@ -1,15 +1,12 @@
-#include "SistemaCajero.h"
-#include "Codificador.h"
+#include "sistemacajero.h"
+#include "codificador.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
 
 using namespace std;
 
-
 static const int SEMILLA_N = 4;
-
-
 
 SistemaCajero::SistemaCajero() {
 
@@ -21,7 +18,7 @@ SistemaCajero::~SistemaCajero() {
 }
 
 void SistemaCajero::cargarUsuarios() {
-    ifstream archivo("Usuarios.txt");
+    ifstream archivo("Usuarios.txt", ios::in | ios::binary);
     if (!archivo.is_open()) {
         return;
     }
@@ -34,19 +31,17 @@ void SistemaCajero::cargarUsuarios() {
     }
 }
 
-void SistemaCajero::guardarUsuarios() {
-    ofstream archivo("Usuarios.txt");
-    if (!archivo.is_open()) {
-        cerr << "No se pudo abrir Usuarios.txt para escribir." << endl;
-        return;
+bool SistemaCajero::guardarUsuarios() {
+    ofstream out("Usuarios.txt", ios::out | ios::trunc | ios::binary);
+    if (!out.is_open()) {
+        cerr << "[ERROR] No se pudo abrir Usuarios.txt para escribir.\n";
+        return false;
     }
-
     for (auto& u : usuarios) {
-
-        archivo << u.first << " "            // Para cédula
-                << u.second.first << " "     // Para contraseña codificada
-                << u.second.second << "\n";  // Para saldo
+        out << u.first << " " << u.second.first << " " << u.second.second << '\n';
     }
+    out.flush();
+    return static_cast<bool>(out);
 }
 
 void SistemaCajero::registrarUsuario(const string& cedula,
@@ -58,7 +53,10 @@ void SistemaCajero::registrarUsuario(const string& cedula,
     string bitsCod = Codificador::codificarBits_M1(bits, SEMILLA_N);
 
     usuarios[cedula] = {bitsCod, saldo};
-    guardarUsuarios();
+    if (!guardarUsuarios()) {
+        cerr << "Registrar usuario: fallo guardado; revirtiendo en memoria.\n";
+        usuarios.erase(cedula);
+    }
 }
 
 
@@ -74,7 +72,11 @@ bool SistemaCajero::iniciarSesion(const string& cedula,
 
     if (it->second.second < 1000.0) return false;
     it->second.second -= 1000.0;
-    guardarUsuarios();
+    if (!guardarUsuarios()) {
+        cerr << "[WARN] Login: fallo guardado; revirtiendo saldo en memoria.\n";
+        it->second.second += 1000.0;
+        return false;
+    }
     return true;
 }
 
@@ -139,3 +141,28 @@ bool SistemaCajero::validarAdmin(const string& contrasena) {
 
     return false;
 }
+
+double SistemaCajero::consultarSaldo(const string& cedula) const {
+    auto it = usuarios.find(cedula);
+    if (it == usuarios.end()) return -1;
+    return it->second.second;
+}
+
+
+bool SistemaCajero::retirar(const string& cedula, double monto) {
+    if (monto <= 0) return false;
+
+    auto it = usuarios.find(cedula);
+    if (it == usuarios.end()) return false;
+
+    if (it->second.second < monto) return false;
+
+    it->second.second -= monto;
+    if (!guardarUsuarios()) {
+        cerr << "Retiro: fallo al guardar, revirtiendo saldo.\n";
+        it->second.second += monto;
+        return false;
+    }
+    return true;
+}
+

@@ -13,7 +13,7 @@ private:
     void cargarUsuarios();
 
     // Para guardar los usuarios en el archivo (Usuarios.txt)
-    void guardarUsuarios();
+    bool guardarUsuarios();
 
 public:
     SistemaCajero();
@@ -24,6 +24,11 @@ public:
     bool iniciarSesion(const string& cedula, const string& contrasena);
 
     bool validarAdmin(const string& contrasena);
+
+    double consultarSaldo(const string& cedula) const;
+
+    bool retirar(const string& cedula, double monto);
+
 
 };
 
