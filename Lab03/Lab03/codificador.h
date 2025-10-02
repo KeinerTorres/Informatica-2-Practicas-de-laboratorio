@@ -12,6 +12,9 @@ public:
     // Decodifica el texto invirtiendo el proceso
     static string decodificar(const string& textoCodificado, int n);
 
+    static string codificarSoloBits(const string& textoClaro, int n);
+    static string decodificarDesdeBits(const string& bitsCodificados, int n);
+
     // Hace la conversion texto a bits
     static string textoA_bits(const string& s);
     static string bitsA_texto(const string& bits);

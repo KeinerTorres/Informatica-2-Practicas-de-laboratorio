@@ -1,4 +1,4 @@
-#include "Codificador.h"
+#include "codificador.h"
 #include <stdexcept>
 using namespace std;
 
@@ -124,5 +124,15 @@ string Codificador::codificar(const string& textoClaro, int n) {
 string Codificador::decodificar(const string& textoCodificado, int n) {
     string bitsCod = textoA_bits(textoCodificado);
     string bitsOrig = decodificarBits_M1(bitsCod, n);
+    return bitsA_texto(bitsOrig);
+}
+
+string Codificador::codificarSoloBits(const string& textoClaro, int n) {
+    string bits = textoA_bits(textoClaro);
+    return codificarBits_M1(bits, n);
+}
+
+string Codificador::decodificarDesdeBits(const string& bitsCodificados, int n) {
+    string bitsOrig = decodificarBits_M1(bitsCodificados, n);
     return bitsA_texto(bitsOrig);
 }
