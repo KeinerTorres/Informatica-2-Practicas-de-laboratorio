@@ -18,7 +18,7 @@ SistemaCajero::~SistemaCajero() {
 }
 
 void SistemaCajero::cargarUsuarios() {
-    ifstream archivo("Usuarios.txt", ios::in | ios::binary);
+    ifstream archivo("Usuarios.txt", ios::in);
     if (!archivo.is_open()) {
         return;
     }
@@ -32,9 +32,9 @@ void SistemaCajero::cargarUsuarios() {
 }
 
 bool SistemaCajero::guardarUsuarios() {
-    ofstream out("Usuarios.txt", ios::out | ios::trunc | ios::binary);
+    ofstream out("Usuarios.txt", ios::out | ios::trunc);
     if (!out.is_open()) {
-        cerr << "[ERROR] No se pudo abrir Usuarios.txt para escribir.\n";
+        cerr << "No se pudo abrir Usuarios.txt para escribir.\n";
         return false;
     }
     for (auto& u : usuarios) {
@@ -42,6 +42,28 @@ bool SistemaCajero::guardarUsuarios() {
     }
     out.flush();
     return static_cast<bool>(out);
+}
+
+void SistemaCajero::registrarTransaccionCodificada(const string& cedula,
+                                                   const string& operacion,
+                                                   double monto) {
+
+    ostringstream claro;
+    claro << "cedula:" << cedula
+          << ";operacion:" << operacion
+          << ";monto:" << monto;
+
+    // Pasamos el texto a bits y aplicamos método 1
+    string bits = Codificador::textoA_bits(claro.str());
+    string bitsCod = Codificador::codificarBits_M1(bits, SEMILLA_N);
+
+
+    ofstream log("Transacciones.txt", ios::app);
+    if (!log.is_open()) {
+        cerr << "No se pudo abrir Transacciones.txt para escribir.\n";
+        return;
+    }
+    log << bitsCod << '\n';
 }
 
 void SistemaCajero::registrarUsuario(const string& cedula,
@@ -73,27 +95,34 @@ bool SistemaCajero::iniciarSesion(const string& cedula,
     if (it->second.second < 1000.0) return false;
     it->second.second -= 1000.0;
     if (!guardarUsuarios()) {
-        cerr << "[WARN] Login: fallo guardado; revirtiendo saldo en memoria.\n";
+        cerr << "Login: fallo guardado; revirtiendo saldo en memoria.\n";
         it->second.second += 1000.0;
         return false;
     }
+
+    registrarTransaccionCodificada(cedula, "inicio_sesion", 1000.0);
     return true;
 }
 
 bool SistemaCajero::validarAdmin(const string& contrasena) {
-    ifstream f("sudo.txt", ios::binary);
+    ifstream f("sudo.txt");
     if (!f.is_open()) {
         cerr << "Error al abrir sudo.txt" << endl;
         return false;
     }
 
 
-    string contenidoCod((istreambuf_iterator<char>(f)), istreambuf_iterator<char>());
+    string contenidoBits, linea;
+    while (getline(f, linea)) {
+        for (char c : linea) {
+            if (c == '0' || c == '1') contenidoBits.push_back(c);
+        }
+    }
     f.close();
 
     string textoClaro;
     try {
-        textoClaro = Codificador::decodificar(contenidoCod, SEMILLA_N);
+        textoClaro = Codificador::decodificarDesdeBits(contenidoBits, SEMILLA_N);
     } catch (...) {
         cerr << "No se pudo decodificar sudo.txt (verifique la semilla n)." << endl;
         return false;
@@ -101,7 +130,6 @@ bool SistemaCajero::validarAdmin(const string& contrasena) {
 
 
     istringstream lines(textoClaro);
-    string linea;
 
     while (true) {
         string ced, usu, cla, sal;
@@ -163,6 +191,8 @@ bool SistemaCajero::retirar(const string& cedula, double monto) {
         it->second.second += monto;
         return false;
     }
+
+    registrarTransaccionCodificada(cedula, "retiro", monto);
     return true;
 }
 

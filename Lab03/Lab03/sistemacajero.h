@@ -14,6 +14,10 @@ private:
 
     // Para guardar los usuarios en el archivo (Usuarios.txt)
     bool guardarUsuarios();
+    //Para registrar las transacciones codificadas
+    void registrarTransaccionCodificada(const string& cedula,
+                                        const string& operacion,
+                                        double monto);
 
 public:
     SistemaCajero();
@@ -28,7 +32,6 @@ public:
     double consultarSaldo(const string& cedula) const;
 
     bool retirar(const string& cedula, double monto);
-
 
 };
 
