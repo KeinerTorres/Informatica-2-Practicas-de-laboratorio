@@ -6,12 +6,6 @@ using namespace std;
 
 class Codificador {
 public:
-    // Este es para modificar el texto usando el metodo 1
-    static string codificar(const string& textoClaro, int n);
-
-    // Decodifica el texto invirtiendo el proceso
-    static string decodificar(const string& textoCodificado, int n);
-
     static string codificarSoloBits(const string& textoClaro, int n);
     static string decodificarDesdeBits(const string& bitsCodificados, int n);
 

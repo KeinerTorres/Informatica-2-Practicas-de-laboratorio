@@ -113,20 +113,6 @@ string Codificador::decodificarBits_M1(const string& bitsCod, int n) {
     }
     return resultado;
 }
-
-
-string Codificador::codificar(const string& textoClaro, int n) {
-    string bits = textoA_bits(textoClaro);
-    string bitsCod = codificarBits_M1(bits, n);
-    return bitsA_texto(bitsCod);
-}
-
-string Codificador::decodificar(const string& textoCodificado, int n) {
-    string bitsCod = textoA_bits(textoCodificado);
-    string bitsOrig = decodificarBits_M1(bitsCod, n);
-    return bitsA_texto(bitsOrig);
-}
-
 string Codificador::codificarSoloBits(const string& textoClaro, int n) {
     string bits = textoA_bits(textoClaro);
     return codificarBits_M1(bits, n);
