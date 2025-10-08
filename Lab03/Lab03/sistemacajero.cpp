@@ -40,7 +40,7 @@ bool SistemaCajero::guardarUsuarios() {
     for (auto& u : usuarios) {
         out << u.first << " " << u.second.first << " " << u.second.second << '\n';
     }
-    out.flush();
+    out.close();
     return static_cast<bool>(out);
 }
 
@@ -105,10 +105,15 @@ bool SistemaCajero::iniciarSesion(const string& cedula,
 }
 
 bool SistemaCajero::validarAdmin(const string& contrasena) {
+    const bool DEBUG = true;
+
     ifstream f("sudo.txt");
     if (!f.is_open()) {
-        cerr << "Error al abrir sudo.txt" << endl;
-        return false;
+        f.open("sudo");
+        if (!f.is_open()) {
+            cerr << "Error al abrir sudo.txt" << endl;
+            return false;
+        }
     }
 
 
@@ -120,7 +125,12 @@ bool SistemaCajero::validarAdmin(const string& contrasena) {
     }
     f.close();
 
+    if (contenidoBits.empty() || (contenidoBits.size() % 8) != 0) {
+        cerr << "sudo.txt no contiene un número válido de bits (múltiplo de 8 requerido).\n";
+        return false;
+    }
     string textoClaro;
+
     try {
         textoClaro = Codificador::decodificarDesdeBits(contenidoBits, SEMILLA_N);
     } catch (...) {
@@ -128,45 +138,26 @@ bool SistemaCajero::validarAdmin(const string& contrasena) {
         return false;
     }
 
+    auto trim = [](string& s) {
+        auto ws = [](unsigned char ch){ return ch==' '||ch=='\t'||ch=='\r'||ch=='\n'; };
+        size_t i=0, j=s.size();
+        while (i<j && ws((unsigned char)s[i])) ++i;
+        while (j>i && ws((unsigned char)s[j-1])) --j;
+        if (i>0 || j<s.size()) s = s.substr(i, j-i);
+    };
 
-    istringstream lines(textoClaro);
-
-    while (true) {
-        string ced, usu, cla, sal;
-
-        // Para cédula
-        if (!getline(lines, linea)) break;
-        if (linea.rfind("cedula:", 0) != 0) continue;
-        ced = linea.substr(7);
-        if (!ced.empty() && ced[0] == ' ') ced.erase(0, 1);
-
-        // Para usuario
-        if (!getline(lines, linea)) break;
-        if (linea.rfind("usuario:", 0) != 0) continue;
-        usu = linea.substr(8);
-        if (!usu.empty() && usu[0] == ' ') usu.erase(0, 1);
-
-        // Para clave
-        if (!getline(lines, linea)) break;
-        if (linea.rfind("clave:", 0) != 0) continue;
-        cla = linea.substr(6);
-        if (!cla.empty() && cla[0] == ' ') cla.erase(0, 1);
-
-        // Para saldo
-        if (!getline(lines, linea)) break;
-        if (linea.rfind("saldo:", 0) != 0) continue;
-        sal = linea.substr(6);
-        if (!sal.empty() && sal[0] == ' ') sal.erase(0, 1);
-
-
-        getline(lines, linea);
-
-
-        if (cla == contrasena) {
-            return true;
+    istringstream in(textoClaro);
+    while (getline(in, linea)) {
+        string l = linea;
+        trim(l);
+        if (l.rfind("clave:", 0) == 0) {
+            string cla = l.substr(6);
+            trim(cla);
+            if (cla == contrasena) {
+                return true;
+            }
         }
     }
-
     return false;
 }
 
