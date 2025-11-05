@@ -82,3 +82,40 @@ void Red::eliminarRouter(const string &nombre) {
         cout << "El router " << nombre << " no existe." << endl;
     }
 }
+
+
+void Red::conectarRouters(const string &r1, const string &r2, int costo) {
+    auto it1 = routers.find(r1);
+    auto it2 = routers.find(r2);
+
+    if (it1 == routers.end() || it2 == routers.end()) {
+        cout << "Uno o ambos routers no existen." << endl;
+        return;
+    }
+
+    it1->second.agregarVecino(r2, costo);
+    it2->second.agregarVecino(r1, costo);
+
+    recalcularTablas();
+    cout << "Conectados " << r1 << " <-> " << r2 << " (Costo: " << costo << ")" << endl;
+}
+
+void Red::actualizarCostoEnlace(const string &r1, const string &r2, int nuevoCosto) {
+    conectarRouters(r1, r2, nuevoCosto);
+}
+
+void Red::desconectarRouters(const string &r1, const string &r2) {
+    auto it1 = routers.find(r1);
+    auto it2 = routers.find(r2);
+
+    if (it1 == routers.end() || it2 == routers.end()) {
+        cout << "Uno o ambos routers no existen." << endl;
+        return;
+    }
+
+    it1->second.eliminarVecino(r2);
+    it2->second.eliminarVecino(r1);
+
+    recalcularTablas();
+    cout << "Desconectados " << r1 << " y " << r2 << "." << endl;
+}

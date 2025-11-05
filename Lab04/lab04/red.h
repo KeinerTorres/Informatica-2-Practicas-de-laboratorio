@@ -15,6 +15,11 @@ private:
 public:
     void agregarRouter(const string &nombre);
     void eliminarRouter(const string &nombre);
+
+    void conectarRouters(const string &r1, const string &r2, int costo);
+    void actualizarCostoEnlace(const string &r1, const string &r2, int nuevoCosto);
+    void desconectarRouters(const string &r1, const string &r2);
+};
 };
 
 #endif
