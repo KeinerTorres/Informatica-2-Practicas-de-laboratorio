@@ -4,6 +4,9 @@
 #include <queue>
 #include <limits>
 #include <algorithm>
+#include <fstream>
+#include <sstream>
+#include <random>
 using namespace std;
 
 void Red::recalcularTablas() {
@@ -302,4 +305,60 @@ bool Red::guardarEnArchivo(const string &rutaArchivo) const {
 
     cout << "Red guardada correctamente en " << rutaArchivo << "." << endl;
     return true;
+}
+
+void Red::generarRedAleatoria(int numeroRouters, double densidadEnlaces,
+                              int costoMinimo, int costoMaximo) {
+    if (numeroRouters <= 0) {
+        cout << "El numero de routers debe ser positivo." << endl;
+        return;
+    }
+    if (densidadEnlaces < 0.0 || densidadEnlaces > 1.0) {
+        cout << "La densidad debe estar en el rango [0, 1]." << endl;
+        return;
+    }
+    if (costoMinimo <= 0 || costoMaximo < costoMinimo) {
+        cout << "Rango de costos invalido." << endl;
+        return;
+    }
+
+    routers.clear();
+
+
+    for (int i = 1; i <= numeroRouters; ++i) {
+        string nombre = "R" + to_string(i);
+        routers.emplace(nombre, Router(nombre));
+    }
+
+
+    mt19937 rng(random_device{}());
+    uniform_int_distribution<int> distCosto(costoMinimo, costoMaximo);
+    uniform_real_distribution<double> distProb(0.0, 1.0);
+
+
+    for (int i = 1; i < numeroRouters; ++i) {
+        string a = "R" + to_string(i);
+        string b = "R" + to_string(i + 1);
+        int w = distCosto(rng);
+        routers[a].agregarVecino(b, w);
+        routers[b].agregarVecino(a, w);
+    }
+
+
+    for (int i = 1; i <= numeroRouters; ++i) {
+        for (int j = i + 1; j <= numeroRouters; ++j) {
+            string a = "R" + to_string(i);
+            string b = "R" + to_string(j);
+            if (routers[a].vecinos.count(b) == 0) {
+                if (distProb(rng) < densidadEnlaces) {
+                    int w = distCosto(rng);
+                    routers[a].agregarVecino(b, w);
+                    routers[b].agregarVecino(a, w);
+                }
+            }
+        }
+    }
+
+    recalcularTablas();
+    cout << "Se genero una red aleatoria con " << numeroRouters << " routers." << endl;
 }

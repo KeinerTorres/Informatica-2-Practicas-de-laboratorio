@@ -29,6 +29,9 @@ public:
     bool cargarDesdeArchivo(const string &rutaArchivo);
     bool guardarEnArchivo(const string &rutaArchivo) const;
 
+    void generarRedAleatoria(int numeroRouters, double densidadEnlaces,
+                             int costoMinimo, int costoMaximo);
+
 };
 
 #endif
