@@ -178,3 +178,128 @@ void Red::mostrarRutaMinima(const string &origen, const string &destino) const {
     }
     cout << endl;
 }
+
+bool Red::cargarDesdeArchivo(const string &rutaArchivo) {
+    ifstream archivo(rutaArchivo);
+    if (!archivo.is_open()) {
+        cout << "No se pudo abrir el archivo " << rutaArchivo << "." << endl;
+        return false;
+    }
+
+    string linea;
+    int n = 0, m = 0;
+
+    auto trim = [](string s) {
+        size_t i = s.find_first_not_of(" \t\r\n");
+        size_t j = s.find_last_not_of(" \t\r\n");
+        if (i == string::npos) return string();
+        return s.substr(i, j - i + 1);
+    };
+
+
+    while (getline(archivo, linea)) {
+        linea = trim(linea);
+        if (linea.empty() || linea[0] == '#') continue;
+        stringstream ss(linea);
+        if (ss >> n >> m) break;
+        cout << "Formato incorrecto en la cabecera (se esperaba: N M)." << endl;
+        return false;
+    }
+
+    if (n <= 0 || m < 0) {
+        cout << "Valores invalidos de N o M." << endl;
+        return false;
+    }
+
+
+    routers.clear();
+
+
+    int leidos = 0;
+    while (leidos < n && getline(archivo, linea)) {
+        linea = trim(linea);
+        if (linea.empty() || linea[0] == '#') continue;
+        routers.emplace(linea, Router(linea));
+        ++leidos;
+    }
+    if (leidos != n) {
+        cout << "Numero de routers declarado no coincide con los nombres provistos." << endl;
+        return false;
+    }
+
+
+    int enlaces = 0;
+    while (enlaces < m && getline(archivo, linea)) {
+        linea = trim(linea);
+        if (linea.empty() || linea[0] == '#') continue;
+
+        string u, v;
+        int w;
+        stringstream ss(linea);
+        if (!(ss >> u >> v >> w)) {
+            cout << "Linea de enlace invalida: " << linea << endl;
+            return false;
+        }
+        auto itU = routers.find(u);
+        auto itV = routers.find(v);
+        if (itU == routers.end() || itV == routers.end()) {
+            cout << "Enlace referencia routers inexistentes: " << u << " " << v << endl;
+            return false;
+        }
+        itU->second.agregarVecino(v, w);
+        itV->second.agregarVecino(u, w);
+        ++enlaces;
+    }
+    if (enlaces != m) {
+        cout << "Numero de enlaces leidos no coincide con M." << endl;
+        return false;
+    }
+
+    recalcularTablas();
+    cout << "Red cargada correctamente desde " << rutaArchivo << "." << endl;
+    return true;
+}
+
+bool Red::guardarEnArchivo(const string &rutaArchivo) const {
+    ofstream out(rutaArchivo);
+    if (!out.is_open()) {
+        cout << "No se pudo abrir el archivo " << rutaArchivo << " para escritura." << endl;
+        return false;
+    }
+
+    int n = static_cast<int>(routers.size());
+    int m = 0;
+
+
+    for (const auto &par : routers) {
+        const string &u = par.first;
+        const Router &ru = par.second;
+        for (const auto &vec : ru.vecinos) {
+            const string &v = vec.first;
+            if (u < v) ++m;
+        }
+    }
+
+    out << n << " " << m << "\n";
+
+    // Nombres de routers
+    for (const auto &par : routers) {
+        out << par.first << "\n";
+    }
+
+
+    for (const auto &par : routers) {
+        const string &u = par.first;
+        const Router &ru = par.second;
+        for (const auto &vec : ru.vecinos) {
+            const string &v = vec.first;
+            int w = vec.second;
+            if (u < v) {
+                out << u << " " << v << " " << w << "\n";
+            }
+        }
+    }
+
+    cout << "Red guardada correctamente en " << rutaArchivo << "." << endl;
+    return true;
+}

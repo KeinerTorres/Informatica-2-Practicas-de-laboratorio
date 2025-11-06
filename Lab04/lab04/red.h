@@ -25,6 +25,10 @@ public:
     void mostrarTablasEnrutamiento() const;
 
     void mostrarRutaMinima(const string &origen, const string &destino) const;
+
+    bool cargarDesdeArchivo(const string &rutaArchivo);
+    bool guardarEnArchivo(const string &rutaArchivo) const;
+
 };
 
 #endif
