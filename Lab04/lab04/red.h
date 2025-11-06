@@ -19,7 +19,11 @@ public:
     void conectarRouters(const string &r1, const string &r2, int costo);
     void actualizarCostoEnlace(const string &r1, const string &r2, int nuevoCosto);
     void desconectarRouters(const string &r1, const string &r2);
-};
+
+    bool existeRouter(const string &nombre) const;
+    void mostrarEstadoRed() const;
+    void mostrarTablasEnrutamiento() const;
+
 };
 
 #endif

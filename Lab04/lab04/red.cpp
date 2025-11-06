@@ -119,3 +119,35 @@ void Red::desconectarRouters(const string &r1, const string &r2) {
     recalcularTablas();
     cout << "Desconectados " << r1 << " y " << r2 << "." << endl;
 }
+
+bool Red::existeRouter(const string &nombre) const {
+    return routers.find(nombre) != routers.end();
+}
+
+void Red::mostrarEstadoRed() const {
+    cout << "\n    Estado actual de la red   " << endl;
+    for (const auto &par : routers) {
+        const string &nombre = par.first;
+        const Router &r = par.second;
+        cout << nombre << " conectado a: ";
+        if (r.vecinos.empty()) {
+            cout << "(sin conexiones)";
+        } else {
+            bool primero = true;
+            for (const auto &vec : r.vecinos) {
+                if (!primero) cout << ", ";
+                cout << vec.first << "(" << vec.second << ")";
+                primero = false;
+            }
+        }
+        cout << endl;
+    }
+    cout << endl;
+}
+
+void Red::mostrarTablasEnrutamiento() const {
+    cout << "\n   Tablas de enrutamiento de la red   " << endl;
+    for (const auto &par : routers) {
+        par.second.mostrarTabla();
+    }
+}
