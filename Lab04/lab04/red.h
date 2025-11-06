@@ -24,6 +24,7 @@ public:
     void mostrarEstadoRed() const;
     void mostrarTablasEnrutamiento() const;
 
+    void mostrarRutaMinima(const string &origen, const string &destino) const;
 };
 
 #endif

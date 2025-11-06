@@ -151,3 +151,30 @@ void Red::mostrarTablasEnrutamiento() const {
         par.second.mostrarTabla();
     }
 }
+
+void Red::mostrarRutaMinima(const string &origen, const string &destino) const {
+    auto itOrigen = routers.find(origen);
+    auto itDestino = routers.find(destino);
+    if (itOrigen == routers.end() || itDestino == routers.end()) {
+        cout << "Uno o ambos routers no existen." << endl;
+        return;
+    }
+
+    const Router &r = itOrigen->second;
+    auto it = r.tablaEnrutamiento.find(destino);
+    if (it == r.tablaEnrutamiento.end() || it->second.first == numeric_limits<int>::max()) {
+        cout << "No existe una ruta entre " << origen << " y " << destino << "." << endl;
+        return;
+    }
+
+    const int costoTotal = it->second.first;
+    const vector<string> &ruta = it->second.second;
+
+    cout << "\nCamino mas corto de " << origen << " a " << destino
+         << " (costo total: " << costoTotal << "):" << endl;
+    for (size_t i = 0; i < ruta.size(); ++i) {
+        cout << ruta[i];
+        if (i + 1 < ruta.size()) cout << "\n|\n";
+    }
+    cout << endl;
+}
