@@ -28,6 +28,13 @@ public:
     double obtenerMasa() const;
     double obtenerRadio() const;
     bool estaActiva() const;
+
+    void establecerPosicion(const Vector2D &nuevaPosicion);
+    void establecerVelocidad(const Vector2D &nuevaVelocidad);
+    void establecerMasa(double nuevaMasa);
+    void establecerRadio(double nuevoRadio);
+    void establecerActiva(bool estado);
+
 };
 
 #endif // PARTICULA_H

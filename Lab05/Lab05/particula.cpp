@@ -53,3 +53,27 @@ bool Particula::estaActiva() const
     return activa;
 }
 
+void Particula::establecerPosicion(const Vector2D &nuevaPosicion)
+{
+    posicion = nuevaPosicion;
+}
+
+void Particula::establecerVelocidad(const Vector2D &nuevaVelocidad)
+{
+    velocidad = nuevaVelocidad;
+}
+
+void Particula::establecerMasa(double nuevaMasa)
+{
+    masa = nuevaMasa;
+}
+
+void Particula::establecerRadio(double nuevoRadio)
+{
+    radio = nuevoRadio;
+}
+
+void Particula::establecerActiva(bool estado)
+{
+    activa = estado;
+}
