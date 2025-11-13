@@ -5,7 +5,6 @@ CONFIG -= qt
 
 SOURCES += \
         caja.cpp \
-        dibujo.cpp \
         main.cpp \
         obstaculo.cpp \
         particula.cpp \
@@ -14,7 +13,6 @@ SOURCES += \
 
 HEADERS += \
     caja.h \
-    dibujo.h \
     obstaculo.h \
     particula.h \
     simulador.h \
