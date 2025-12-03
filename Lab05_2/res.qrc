@@ -4,5 +4,8 @@
         <file>images/Mortero.png</file>
         <file>images/Proyectil.png</file>
         <file>images/Mortero2.png</file>
+        <file>images/horizontal.png</file>
+        <file>images/vertical.png</file>
+        <file>images/Muneco.png</file>
     </qresource>
 </RCC>
