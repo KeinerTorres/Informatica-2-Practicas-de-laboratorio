@@ -3,5 +3,6 @@
         <file>images/background.png</file>
         <file>images/Mortero.png</file>
         <file>images/Proyectil.png</file>
+        <file>images/Mortero2.png</file>
     </qresource>
 </RCC>
