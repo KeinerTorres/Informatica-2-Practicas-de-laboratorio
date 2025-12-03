@@ -8,6 +8,7 @@
 #include <QKeyEvent>
 #include <QTimer>
 #include "Proyectil.h"
+#include "Jugador.h"
 
 class Widget : public QWidget
 {
@@ -25,15 +26,26 @@ private:
     float angulo;
     float velocidad;
 
+    float angulo2;
+    float velocidad2;
+
     QGraphicsScene *scene;
     QGraphicsView *view;
 
 
     QGraphicsPixmapItem *spriteFondo;
     QGraphicsPixmapItem *spriteProyectil;
+    QGraphicsPixmapItem *spriteJugador;
+
+    QGraphicsPixmapItem *spriteProyectil2;
+    QGraphicsPixmapItem *spriteJugador2;
 
     QTimer *timer;
     Proyectil* proyectil1;
+    Jugador jugador1;
+
+    Proyectil* proyectil2;
+    Jugador jugador2;
 
     void actualizarJuego();
 };
