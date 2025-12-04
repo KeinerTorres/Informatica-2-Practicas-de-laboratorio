@@ -18,9 +18,15 @@ public:
     int vidaV3;
     int vidaV4;
     int vidaH2;
+    int vidaMuñeco1;
+    int vidaMuñeco2;
 
     void recibirDanio(QGraphicsItem *pared, int cantidad, bool esJugador1, float velocidadProyectil);
     void colisionarConProyectil(QGraphicsItem *proyectil, bool esJugador1);
+
+    QGraphicsPixmapItem* obtenerMuneco1() { return muneco; }
+    QGraphicsPixmapItem* obtenerMuneco2() { return muneco2; }
+
 
 signals:
     void finDelJuego();

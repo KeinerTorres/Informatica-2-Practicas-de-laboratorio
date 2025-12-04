@@ -20,7 +20,9 @@ Castillo::Castillo(QObject *parent)
     vidaH(200),
     vidaV3(200),
     vidaV4(200),
-    vidaH2(200)
+    vidaH2(200),
+    vidaMuñeco1(50),
+    vidaMuñeco2(50)
 {
     horizontal = new QGraphicsPixmapItem(QPixmap(":/images/horizontal.png"));
     horizontal2 = new QGraphicsPixmapItem(QPixmap(":/images/horizontal.png"));
@@ -29,6 +31,7 @@ Castillo::Castillo(QObject *parent)
     vertical3   = new QGraphicsPixmapItem(QPixmap(":/images/vertical.png"));
     vertical4   = new QGraphicsPixmapItem(QPixmap(":/images/vertical.png"));
     muneco      = new QGraphicsPixmapItem(QPixmap(":/images/Muneco.png"));
+    muneco2     = new QGraphicsPixmapItem(QPixmap(":/images/Muneco.png"));
 
     horizontal->setPos(75, 350);
     vertical1->setPos(160, 400);   // Pared izquierda del jugador 1
@@ -37,6 +40,7 @@ Castillo::Castillo(QObject *parent)
     vertical3->setPos(550, 400);   // Pared izquierda del jugador 2
     vertical4->setPos(600, 400);   // Pared derecha del jugador 2
     muneco->setPos(85, 270);
+    muneco2->setPos(585, 270);
 
     addToGroup(horizontal);
     addToGroup(vertical1);
@@ -45,6 +49,7 @@ Castillo::Castillo(QObject *parent)
     addToGroup(vertical3);
     addToGroup(vertical4);
     addToGroup(muneco);
+    addToGroup(muneco2);
 }
 
 void Castillo::recibirDanio(QGraphicsItem *pared, int cantidad, bool esJugador1, float velocidadProyectil) {
@@ -130,6 +135,27 @@ void Castillo::colisionarConProyectil(QGraphicsItem *proyectil, bool esJugador1)
         }
         if (proyectil->collidesWithItem(muneco2)) {
             emit finDelJuego();
+        }
+
+        if (proyectil->collidesWithItem(muneco)) {
+            vidaMuñeco1 -= velocidadProyectil;
+            if (vidaMuñeco1 <= 0) {
+                emit finDelJuego();
+                muneco->setVisible(false);
+                delete muneco;
+                muneco = nullptr;
+            }
+        }
+
+
+        if (proyectil->collidesWithItem(muneco2)) {
+            vidaMuñeco2 -= velocidadProyectil;
+            if (vidaMuñeco2 <= 0) {
+                emit finDelJuego();
+                muneco2->setVisible(false);
+                delete muneco2;
+                muneco2 = nullptr;
+            }
         }
     }
 }

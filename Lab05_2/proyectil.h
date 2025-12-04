@@ -1,7 +1,9 @@
 #ifndef PROYECTIL_H
 #define PROYECTIL_H
 
-class Proyectil {
+#include <QGraphicsPixmapItem>
+
+class Proyectil : public QGraphicsPixmapItem {
 public:
     float x, y;
     float v_x, v_y;

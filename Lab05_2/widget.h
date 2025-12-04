@@ -7,6 +7,7 @@
 #include <QGraphicsPixmapItem>
 #include <QKeyEvent>
 #include <QTimer>
+#include <QLabel>
 #include "Proyectil.h"
 #include "Jugador.h"
 #include "castillo.h"
@@ -56,6 +57,8 @@ private:
     QGraphicsPixmapItem *vertical4;
     QGraphicsPixmapItem *muneco;
     QGraphicsPixmapItem *muneco2;
+    QGraphicsPixmapItem *plataforma1;
+    QGraphicsPixmapItem *plataforma2;
 
     int vidaV1;
     int vidaV2;
@@ -63,15 +66,21 @@ private:
     int vidaV3;
     int vidaV4;
     int vidaH2;
+    int vidaMuñeco1;
+    int vidaMuñeco2;
+
+    bool turnoJugador1;
+    bool turnoJugador2;
 
     Juego juego;
 
-    bool disparoJugador1;
-    bool disparoJugador2;
+    QLabel *mensajeVictoria;
 
     void crearCastillo();
+    void crearPlataformas();
 
     void actualizarJuego();
+    void mostrarMensajeVictoria(const QString &mensaje);
 };
 
 #endif // WIDGET_H

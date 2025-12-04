@@ -2,8 +2,9 @@
 
 Juego::Juego()
     : turnoJugador1(true),
-    disparoJugador1(false),
-    disparoJugador2(false),
+    turnoJugador2(false),
+    proyectil1(nullptr),
+    proyectil2(nullptr),
     jugador1(new Jugador("Jugador 1", 0.0f, 330.0f)),
     jugador2(new Jugador("Jugador 2", 700.0f, 330.0f)),
     castillo1(new Castillo()),
@@ -22,24 +23,32 @@ void Juego::iniciarJuego() {
 }
 
 void Juego::cambiarTurno() {
-    if (turnoJugador1) {
-        disparoJugador1 = false;
-    } else {
-        disparoJugador2 = false;
-    }
-
     turnoJugador1 = !turnoJugador1;
+    turnoJugador2 = !turnoJugador2;
+    bloquearTeclas();
 }
 
 bool Juego::verificarVictoria() {
+    if (todasLasBarrerasDestruidas(true) && castillo2->obtenerMuneco2()->collidesWithItem(proyectil1)) {
+        return true;
+    }
 
-    if (castillo1->vidaH <= 0 && castillo1->vidaV1 <= 0 && castillo1->vidaV2 <= 0 && castillo1->vidaH2 <= 0 && castillo1->vidaV3 <= 0 && castillo1->vidaV4 <= 0) {
+    if (todasLasBarrerasDestruidas(false) && castillo1->obtenerMuneco1()->collidesWithItem(proyectil2)) {
         return true;
     }
-    if (castillo2->vidaH <= 0 && castillo2->vidaV1 <= 0 && castillo2->vidaV2 <= 0 && castillo2->vidaH2 <= 0 && castillo2->vidaV3 <= 0 && castillo2->vidaV4 <= 0) {
-        return true;
-    }
+
     return false;
+}
+
+
+bool Juego::todasLasBarrerasDestruidas(bool esJugador1) {
+    if (esJugador1) {
+        return castillo2->vidaH <= 0 && castillo2->vidaV1 <= 0 && castillo2->vidaV2 <= 0 &&
+               castillo2->vidaH2 <= 0 && castillo2->vidaV3 <= 0 && castillo2->vidaV4 <= 0;
+    } else {
+        return castillo1->vidaH <= 0 && castillo1->vidaV1 <= 0 && castillo1->vidaV2 <= 0 &&
+               castillo1->vidaH2 <= 0 && castillo1->vidaV3 <= 0 && castillo1->vidaV4 <= 0;
+    }
 }
 
 void Juego::calcularDanio(QGraphicsItem *pared, float velocidadProyectil, bool esJugador1) {
@@ -70,11 +79,16 @@ bool Juego::esTurnoJugador1() const {
     return turnoJugador1;
 }
 
-bool Juego::puedeDisparar() const {
-    if (turnoJugador1 && !disparoJugador1) {
-        return true;
-    } else if (!turnoJugador1 && !disparoJugador2) {
-        return true;
+bool Juego::esTurnoJugador2() const {
+    return turnoJugador2;
+}
+
+void Juego::bloquearTeclas() {
+    if (turnoJugador1) {
+        jugador1->setTeclaPermitida(Qt::Key_Space);
+        jugador2->setTeclaNoPermitida(Qt::Key_K);
+    } else if (turnoJugador2) {
+        jugador2->setTeclaPermitida(Qt::Key_K);
+        jugador1->setTeclaNoPermitida(Qt::Key_Space);
     }
-    return false;
 }

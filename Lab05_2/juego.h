@@ -23,16 +23,20 @@ public:
     Castillo* obtenerCastillo1();
     Castillo* obtenerCastillo2();
     bool esTurnoJugador1() const;
-    bool puedeDisparar() const;
+    bool esTurnoJugador2() const;
+
+    void bloquearTeclas();
+    bool todasLasBarrerasDestruidas(bool esJugador1);
 
 private:
     bool turnoJugador1;
-    bool disparoJugador1;
-    bool disparoJugador2;
+    bool turnoJugador2;
     Jugador *jugador1;
     Jugador *jugador2;
     Castillo *castillo1;
     Castillo *castillo2;
+    Proyectil* proyectil1;
+    Proyectil* proyectil2;
 };
 
 #endif // JUEGO_H

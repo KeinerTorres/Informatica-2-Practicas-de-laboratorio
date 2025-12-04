@@ -7,5 +7,6 @@
         <file>images/horizontal.png</file>
         <file>images/vertical.png</file>
         <file>images/Muneco.png</file>
+        <file>images/Plataforma.png</file>
     </qresource>
 </RCC>
