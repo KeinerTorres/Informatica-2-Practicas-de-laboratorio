@@ -14,6 +14,8 @@ public:
 
     void mover(float dt);
     void colisionarConLimites(float anchoEscenario, float altoEscenario);
+
+    float obtenerVelocidad() const;
 };
 
 #endif // PROYECTIL_H

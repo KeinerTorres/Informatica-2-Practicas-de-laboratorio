@@ -1,4 +1,5 @@
 #include "castillo.h"
+#include "proyectil.h"
 #include <QGraphicsPixmapItem>
 #include <QGraphicsScene>
 #include <QGraphicsItem>
@@ -46,45 +47,48 @@ Castillo::Castillo(QObject *parent)
     addToGroup(muneco);
 }
 
-void Castillo::recibirDanio(QGraphicsItem *pared, int cantidad, bool esJugador1) {
+void Castillo::recibirDanio(QGraphicsItem *pared, int cantidad, bool esJugador1, float velocidadProyectil) {
+
+    float dano = cantidad * velocidadProyectil;
+
     if (pared == horizontal) {
         if (!esJugador1) {
-            vidaH -= cantidad;
+            vidaH -= dano;
             if (vidaH <= 0) {
-                horizontal->setVisible(false);
+                delete horizontal;
             }
         }
     } else if (pared == vertical1) {
         if (esJugador1) return;  // Para que el jugador 1 no le hace daño a sus propias paredes
-        vidaV1 -= cantidad;
+        vidaV1 -= dano;
         if (vidaV1 <= 0) {
-            vertical1->setVisible(false);
+            delete vertical1;
         }
     } else if (pared == vertical2) {
         if (esJugador1) return;
-        vidaV2 -= cantidad;
+        vidaV2 -= dano;
         if (vidaV2 <= 0) {
-            vertical2->setVisible(false);
+            delete vertical2;
         }
     } else if (pared == horizontal2) {
         if (esJugador1) {
-            vidaH2 -= cantidad;
+            vidaH2 -= dano;
             if (vidaH2 <= 0) {
-                horizontal2->setVisible(false);
+                delete horizontal2;
             }
         }
     } else if (pared == vertical3) {
         if (esJugador1) {
-            vidaV3 -= cantidad;
+            vidaV3 -= dano;
             if (vidaV3 <= 0) {
-                vertical3->setVisible(false);
+                delete vertical3;
             }
         }
     } else if (pared == vertical4) {
         if (esJugador1) {
-            vidaV4 -= cantidad;
+            vidaV4 -= dano;
             if (vidaV4 <= 0) {
-                vertical4->setVisible(false);
+                delete vertical4;
             }
         }
     } else {
@@ -97,28 +101,35 @@ void Castillo::recibirDanio(QGraphicsItem *pared, int cantidad, bool esJugador1)
 }
 
 void Castillo::colisionarConProyectil(QGraphicsItem *proyectil, bool esJugador1) {
-    if (proyectil->collidesWithItem(vertical1)) {
-        recibirDanio(vertical1, 10, esJugador1);
-    }
-    if (proyectil->collidesWithItem(vertical2)) {
-        recibirDanio(vertical2, 10, esJugador1);
-    }
-    if (proyectil->collidesWithItem(horizontal)) {
-        recibirDanio(horizontal, 10, esJugador1);
-    }
-    if (proyectil->collidesWithItem(horizontal2)) {
-        recibirDanio(horizontal2, 10, esJugador1);
-    }
-    if (proyectil->collidesWithItem(vertical3)) {
-        recibirDanio(vertical3, 10, esJugador1);
-    }
-    if (proyectil->collidesWithItem(vertical4)) {
-        recibirDanio(vertical4, 10, esJugador1);
-    }
-    if (proyectil->collidesWithItem(muneco)) {
-        emit finDelJuego();
-    }
-    if (proyectil->collidesWithItem(muneco2)) {
-        emit finDelJuego();
+
+    Proyectil* proyectilItem = dynamic_cast<Proyectil*>(proyectil);
+
+    if (proyectilItem) {
+        float velocidadProyectil = proyectilItem->obtenerVelocidad();
+
+        if (proyectil->collidesWithItem(vertical1)) {
+            recibirDanio(vertical1, 10, esJugador1, velocidadProyectil);
+        }
+        if (proyectil->collidesWithItem(vertical2)) {
+            recibirDanio(vertical2, 10, esJugador1, velocidadProyectil);
+        }
+        if (proyectil->collidesWithItem(horizontal)) {
+            recibirDanio(horizontal, 10, esJugador1, velocidadProyectil);
+        }
+        if (proyectil->collidesWithItem(horizontal2)) {
+            recibirDanio(horizontal2, 10, esJugador1, velocidadProyectil);
+        }
+        if (proyectil->collidesWithItem(vertical3)) {
+            recibirDanio(vertical3, 10, esJugador1, velocidadProyectil);
+        }
+        if (proyectil->collidesWithItem(vertical4)) {
+            recibirDanio(vertical4, 10, esJugador1, velocidadProyectil);
+        }
+        if (proyectil->collidesWithItem(muneco)) {
+            emit finDelJuego();
+        }
+        if (proyectil->collidesWithItem(muneco2)) {
+            emit finDelJuego();
+        }
     }
 }

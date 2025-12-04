@@ -6,17 +6,21 @@
 #include <QPixmap>
 #include <QGraphicsItem>
 #include <QDebug>
+#include "Juego.h"
 
 Widget::Widget(QWidget *parent)
     : QWidget(parent),
     proyectil1(nullptr),
     angulo(-5),
     velocidad(300),
-    angulo2(185),
+    angulo2(240),
     velocidad2(300),
     jugador1("Jugador 1", 0.0f, 330.0f),
     proyectil2(nullptr),
-    jugador2("Jugador 2", 700.0f, 330.0f)
+    jugador2("Jugador 2", 700.0f, 330.0f),
+    disparoJugador1(false),
+    disparoJugador2(false),
+    juego()
 {
     setWindowTitle("Juego Interactivo");
     resize(800, 600);
@@ -146,6 +150,11 @@ void Widget::crearCastillo() {
 
 void Widget::keyPressEvent(QKeyEvent *event)
 {
+
+    if (!juego.puedeDisparar()) {
+        return;
+    }
+
     jugador1.controlarProyectil(angulo, velocidad, event->key());
 
     jugador2.controlarProyectil2(angulo2, velocidad2 , event->key());
@@ -156,6 +165,8 @@ void Widget::keyPressEvent(QKeyEvent *event)
             spriteProyectil->setVisible(true);
             spriteProyectil->setPos(jugador1.x, jugador1.y);
             spriteProyectil->setZValue(1);
+            disparoJugador1 = true;
+            juego.cambiarTurno();
         }
     }
 
@@ -165,26 +176,32 @@ void Widget::keyPressEvent(QKeyEvent *event)
             spriteProyectil2->setVisible(true);
             spriteProyectil2->setPos(jugador2.x, jugador2.y);
             spriteProyectil2->setZValue(1);
+            disparoJugador2 = true;
+            juego.cambiarTurno();
         }
     }
 }
 
 void Widget::actualizarJuego() {
+    static const float dt = 0.016;
+
     if (proyectil1) {
-        proyectil1->mover(0.016);
+        proyectil1->mover(dt);
         proyectil1->colisionarConLimites(width(), height());
         spriteProyectil->setPos(proyectil1->x, proyectil1->y);
 
-        if (spriteProyectil->collidesWithItem(vertical1)) {
-            vidaV1 -= 100;
+        if (spriteProyectil->collidesWithItem(vertical1) && vertical1 != nullptr) {
+             vidaV1 -= 100;
             spriteProyectil->setVisible(false);
             delete proyectil1;
             proyectil1 = nullptr;
 
             if (vidaV1 <= 0)
                 vertical1->setVisible(false);
+                delete vertical1;
+                vertical1 = nullptr;
         }
-        else if (spriteProyectil->collidesWithItem(vertical2)) {
+        else if (spriteProyectil->collidesWithItem(vertical2) && vertical2 != nullptr) {
             vidaV2 -= 100;
             spriteProyectil->setVisible(false);
             delete proyectil1;
@@ -192,8 +209,10 @@ void Widget::actualizarJuego() {
 
             if (vidaV2 <= 0)
                 vertical2->setVisible(false);
+                delete vertical2;
+                vertical2 = nullptr;
         }
-        else if (spriteProyectil->collidesWithItem(horizontal)) {
+        else if (spriteProyectil->collidesWithItem(horizontal) && horizontal != nullptr) {
             vidaH -= 100;
             spriteProyectil->setVisible(false);
             delete proyectil1;
@@ -201,18 +220,10 @@ void Widget::actualizarJuego() {
 
             if (vidaH <= 0)
                 horizontal->setVisible(false);
+                delete horizontal;
+                horizontal = nullptr;
         }
 
-
-        else if (spriteProyectil->collidesWithItem(vertical3)) {
-            return;
-        }
-        else if (spriteProyectil->collidesWithItem(vertical4)) {
-            return;
-        }
-        else if (spriteProyectil->collidesWithItem(horizontal2)) {
-            return;
-        }
 
         else if (proyectil1 && (proyectil1->x < 0 || proyectil1->x > width() ||
                                 proyectil1->y < 0 || proyectil1->y > height())) {
@@ -223,11 +234,11 @@ void Widget::actualizarJuego() {
     }
 
     if (proyectil2) {
-        proyectil2->mover(0.016);
+        proyectil2->mover(dt);
         proyectil2->colisionarConLimites(width(), height());
         spriteProyectil2->setPos(proyectil2->x, proyectil2->y);
 
-        if (spriteProyectil2->collidesWithItem(vertical3)) {
+        if (spriteProyectil2->collidesWithItem(vertical3) && vertical3 != nullptr) {
             vidaV3 -= 100;
             spriteProyectil2->setVisible(false);
             delete proyectil2;
@@ -235,8 +246,10 @@ void Widget::actualizarJuego() {
 
             if (vidaV3 <= 0)
                 vertical3->setVisible(false);
+                delete vertical3;
+                vertical3 = nullptr;
         }
-        else if (spriteProyectil2->collidesWithItem(vertical4)) {
+        else if (spriteProyectil2->collidesWithItem(vertical4) && vertical4 != nullptr) {
             vidaV4 -= 100;
             spriteProyectil2->setVisible(false);
             delete proyectil2;
@@ -244,8 +257,11 @@ void Widget::actualizarJuego() {
 
             if (vidaV4 <= 0)
                 vertical4->setVisible(false);
+                delete vertical4;
+                vertical4 = nullptr;
         }
-        else if (spriteProyectil2->collidesWithItem(horizontal2)) {
+        else if (spriteProyectil2->collidesWithItem(horizontal2) && horizontal2 != nullptr) {
+
             vidaH2 -= 100;
             spriteProyectil2->setVisible(false);
             delete proyectil2;
@@ -253,6 +269,8 @@ void Widget::actualizarJuego() {
 
             if (vidaH2 <= 0)
                 horizontal2->setVisible(false);
+                delete horizontal2;
+                horizontal2 = nullptr;
         }
 
         else if (spriteProyectil2->collidesWithItem(vertical1)) {
@@ -271,6 +289,10 @@ void Widget::actualizarJuego() {
             delete proyectil2;
             proyectil2 = nullptr;
         }
+    }
+
+    if (juego.verificarVictoria()) {
+        qDebug() << "¡El juego ha terminado!";
     }
 
     view->viewport()->update();

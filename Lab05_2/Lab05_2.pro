@@ -10,6 +10,7 @@ CONFIG += c++17
 
 SOURCES += \
     castillo.cpp \
+    juego.cpp \
     jugador.cpp \
     main.cpp \
     proyectil.cpp \
@@ -17,6 +18,7 @@ SOURCES += \
 
 HEADERS += \
     castillo.h \
+    juego.h \
     jugador.h \
     proyectil.h \
     widget.h

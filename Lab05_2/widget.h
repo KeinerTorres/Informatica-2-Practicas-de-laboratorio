@@ -10,6 +10,7 @@
 #include "Proyectil.h"
 #include "Jugador.h"
 #include "castillo.h"
+#include "Juego.h"
 
 class Widget : public QWidget
 {
@@ -62,6 +63,11 @@ private:
     int vidaV3;
     int vidaV4;
     int vidaH2;
+
+    Juego juego;
+
+    bool disparoJugador1;
+    bool disparoJugador2;
 
     void crearCastillo();
 

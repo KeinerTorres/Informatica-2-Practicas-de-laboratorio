@@ -19,7 +19,7 @@ public:
     int vidaV4;
     int vidaH2;
 
-    void recibirDanio(QGraphicsItem *pared, int cantidad, bool esJugador1);
+    void recibirDanio(QGraphicsItem *pared, int cantidad, bool esJugador1, float velocidadProyectil);
     void colisionarConProyectil(QGraphicsItem *proyectil, bool esJugador1);
 
 signals:

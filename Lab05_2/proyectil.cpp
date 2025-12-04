@@ -30,3 +30,8 @@ void Proyectil::colisionarConLimites(float anchoEscenario, float altoEscenario) 
         v_y = -v_y;
     }
 }
+
+float Proyectil::obtenerVelocidad() const
+{
+    return velocidad;
+}
