@@ -9,12 +9,14 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    castillo.cpp \
     jugador.cpp \
     main.cpp \
     proyectil.cpp \
     widget.cpp
 
 HEADERS += \
+    castillo.h \
     jugador.h \
     proyectil.h \
     widget.h

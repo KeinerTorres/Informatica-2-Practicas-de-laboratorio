@@ -9,6 +9,7 @@
 #include <QTimer>
 #include "Proyectil.h"
 #include "Jugador.h"
+#include "castillo.h"
 
 class Widget : public QWidget
 {
@@ -32,7 +33,6 @@ private:
     QGraphicsScene *scene;
     QGraphicsView *view;
 
-
     QGraphicsPixmapItem *spriteFondo;
     QGraphicsPixmapItem *spriteProyectil;
     QGraphicsPixmapItem *spriteJugador;
@@ -46,6 +46,24 @@ private:
 
     Proyectil* proyectil2;
     Jugador jugador2;
+
+    QGraphicsPixmapItem *vertical1;
+    QGraphicsPixmapItem *vertical2;
+    QGraphicsPixmapItem *horizontal;
+    QGraphicsPixmapItem *horizontal2;
+    QGraphicsPixmapItem *vertical3;
+    QGraphicsPixmapItem *vertical4;
+    QGraphicsPixmapItem *muneco;
+    QGraphicsPixmapItem *muneco2;
+
+    int vidaV1;
+    int vidaV2;
+    int vidaH;
+    int vidaV3;
+    int vidaV4;
+    int vidaH2;
+
+    void crearCastillo();
 
     void actualizarJuego();
 };
